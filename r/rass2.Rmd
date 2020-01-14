@@ -1,0 +1,39 @@
+```{r}
+df<-read.csv("B:/r and python ass/imdb.csv")
+library(dplyr)
+```
+
+```{r}
+# 7. Get the imdb rating for fifth movie of dataframe
+
+df[['imdbRating']][5]
+
+```
+
+```{r}
+# 8. Return titles of movies with shortest and longest run time
+
+print('minimum duration')
+df$title[which.min(df$duration)]
+print('maximum duration')
+df$title[which.max(df$duration)]
+```
+
+```{r}
+# 9. Sort the data frame by in the order of when they where released and have higer ratings, Hint : release_date (earliest) and Imdb rating(highest to lowest)
+library(tidyr)
+df<-df %>% drop_na(year,imdbRating )
+#df1<-df[rowSums(is.na(df[ ,c(6,9)])) == 0, ]
+df1<-df[order( df[,9],df[,6] ),]
+head(df1)
+```
+
+```{r}
+# 10. Subset the dataframe with movies having the following prameters. revenue more than 2 million spent less than 1 million duration between 30 mintues to 180 minutes 
+
+
+df$duration <-as.numeric(as.character(df[,'duration']))
+df2<-subset(df2,10800>= duration & 1800 <= duration)
+head(df2)
+```
+

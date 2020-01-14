@@ -1,0 +1,62 @@
+---
+output:
+  pdf_document: default
+  html_notebook: default
+  html_document: default
+---
+
+```{r}
+#1. Find the least amount sale that was done for each item.
+library(readxl)
+df<- read_excel("B:/r and python ass/SaleData.xlsx")
+aggregate(df[,'Sale_amt'], list(df$Item), min)
+```
+
+```{r}
+# 2. Compute the total sales for each year and region across all items 
+df['year']=format(as.Date(df$OrderDate, format="%m/%d/%Y"),"%Y")
+aggregate(df[,'Sale_amt'], list(df$year,df$Region,df$Item), sum)
+
+```
+```{r}
+# 3. Create new column 'days_diff' with number of days difference between reference date passed and each order date 
+df$days_diff <-as.Date('01-05-2020','%m-%d-%Y')
+df$days_diff<- difftime(df$days_diff ,df$OrderDate , units = c("days"))
+head (df)
+```
+
+```{r}
+# 4. Create a dataframe with two columns: 'manager', 'list_of_salesmen'. Column 'manager' will contain the unique managers present and column 'list_of_salesmen' will contain an array of all salesmen under each manager. 
+
+df4<-aggregate(df['SalesMan'], list(df$Manager), list)
+colnames(df4)[1]<-"manager"
+colnames(df4)[2]<-"list_of_salesmen"
+head(df4)
+```
+
+```{r}
+# 5. For all regions find number of salesman and total sales. Return as a dataframe with three columns Region, salesmen_count and total_sale
+
+df5<-aggregate(df['Sale_amt'], list(df$Region), sum)
+colnames(df5)[1]<-'Region'
+colnames(df5)[2]<-'total_sale'
+df1<-aggregate(df['SalesMan'], list(df$Region), list)
+df5['Salesman_count']<-c(1,1,1)
+for(i in 1:3) {
+     df5[i,3]<-length(unique(unlist(df1[i,2])))
+     
+}
+
+head(df5)
+```
+
+```{r}
+# 6. Create a dataframe with total sales as percentage for each manager. Dataframe to contain manager and percent_sales
+df6<-aggregate(df['Sale_amt'], list(df$Manager), sum)
+s<-sum(df$Sale_amt)
+df6['percent_sales']<-(df6['Sale_amt']/s)*100
+df6$Sale_amt<-NULL
+colnames(df6)[1]<-"manager"
+head(df6)
+```
+

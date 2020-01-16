@@ -1,0 +1,84 @@
+```{r}
+#q1 used movie_metadata dataset
+
+df<-read.csv("movie_metadata.csv")
+library(dplyr)
+q1<-function(df)
+  {
+  
+   df1=df %>%
+    group_by(title_year,genres,color) %>%
+    summarize(mean = mean(imdb_score, na.rm = TRUE),
+              min = min(imdb_score),sum_of_duration = sum(duration, na.rm = TRUE))
+  }
+head(q1(df))
+```
+```{r}
+#q2 (used movie_metadata dataset)
+
+library(tidyr)
+q2<-function(df2)
+  {
+    df2<-df %>% drop_na()
+    df2$title_l=nchar(as.character(df2$movie_title))
+    df2$quartile <- ntile(df2$title_l, 4)
+    d<-as.data.frame.matrix(table(df2$title_year,df2$quartile))
+    
+    colnames(d)<-c("num_videos_less_than25Percentile","num_videos_25_50Percentile ","num_videos_50_75Percentile","num_videos_greaterthan75Precentile")
+    
+    y<-df2%>%group_by(title_year)%>%summarise(min=min(title_l),max=max(title_l))
+    y$title_year<-NULL
+    return(cbind(y,d))
+  }
+
+print(q2(df2))
+```
+
+```{r}
+#q3
+
+library(descr)
+library(imputeTS)
+t<-read.csv("diamonds.csv")
+q.3<-function(t)
+{
+  t$z[t$z=="None"]<-NA
+  t$z<-as.numeric(t$z)
+  x<-na_mean(t)
+  x$volume <- ifelse(x$depth>60,(x$x)*(x$y)*(as.integer(x$z)), 8)
+  x$quant<-as.numeric(ntile(x$volume, 5))
+  y<-crosstab(x$quant,x$cut,plot=FALSE,type="t")
+  return(y)
+}
+print(q.3(t))
+```
+
+```{r}
+#q5
+library(readr)
+library(mltools)
+u<-read_delim("imdb.csv", delim=',', escape_double=FALSE, escape_backslash=TRUE)
+q5<-function(u)
+  {
+    u$duration[is.na(u$duration)]<-0
+    u$dec<-as.numeric(ntile(u$duration, 10))
+    df4<-u%>%group_by(dec)%>%summarise(no_of_nomi=sum(nrOfNominations),no_of_wins=sum(nrOfWins))
+    df4['count']<-data.frame(table(u$dec))['Freq']
+    temp<-u[c(17:45)]
+    z<-temp%>%group_by(dec)%>%summarise_all(sum)
+    z<-as.data.frame.matrix(t(z))
+    names<-row.names(z)
+    
+    high<-function(x)
+      {
+        return (names[order(x, decreasing = TRUE)[1:3]])
+      }
+    
+    y1<-as.data.frame.matrix(t(sapply(z,high)))
+    colnames(y1)<-c('first','second','third')
+    df4['top genres']<-paste(y1$first,',',y1$second,',',y1$third)
+    return(df4)
+  }
+q5(u)
+```
+

@@ -1,48 +1,68 @@
 ```{r}
-df<-read.csv("B:/r and python ass/diamonds.csv")
+df<-read.csv("diamonds.csv")
 library(dplyr)
 ```
 
 ```{r}
 # 11. Count the duplicate rows of diamonds DataFrame.
-print(nrow(df)-nrow(unique(df)))
+q11<-function(df){
+return(nrow(df)-nrow(unique(df)))}
+
+q11(df)
 ```
 
 ```{r}
-#11
-
+#11 counting number of duplicate rows and displaying count of each row
+q11<-function(df){
 df2<-aggregate(list(numdup=rep(1,nrow(df))), df, length)
-head(df2)
+return(df2)}
+q11(df)
 ```
 
 
 ```{r}
 # 12. Drop rows in case of missing values in carat and cut columns. 
 
-df1<-df[complete.cases(df[ , 1:2]),]
-head(df1)
+q12<-function(df)
+  {
+  df1<-df[complete.cases(df[ , 1:2]),]
+  return(df1)
+}
+q12(df)
 ```
 
 ```{r}
 # 13. Subset the dataframe with only numeric columns.
+q13<-function(df)
+  {
+  df3<-select_if(df, is.numeric)
+  return(df3)
+}
 
-df3<-select_if(df, is.numeric)
-head(df3)
+q13(df)
 ```
 
 ```{r}
 # 14. Compute volume as (x y z) when depth is greater than 60. In case of depth less than 60 default volume to 8. 
+q14<-function(df)
+  {
+  df4<-df
+  df4$volume <- ifelse(df4$depth>60,df$x*df$y, 8)
+  return(df4)
+}
 
-df4<-df
-df4$volume <- ifelse(df4$depth>60,df$x*df$y, 8)
-head(df4)
+q14(df)
 ```
 
 ```{r}
 # 15. Impute missing price values with mean.
+q15<-function(df)
+  {
+  df5<-df
+  df5$price <- ifelse(is.na(df5$price), mean(df5$price, na.rm=TRUE), df5$price)
+  return(df5)
+}
 
-df5<-df
-df5$price <- ifelse(is.na(df5$price), mean(df5$price, na.rm=TRUE), df5$price)
-head(df5)
+q15(df)
 ```
 

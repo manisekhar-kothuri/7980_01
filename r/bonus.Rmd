@@ -1,5 +1,5 @@
 ```{r}
-#q1 used movie_metadata dataset
+#q1 (used movie_metadata dataset) Generate a report that tracks the various Genere combinations for each type year on year. The result data frame should contain type, Genere_combo, year, avg_rating, min_rating, max_rating, total_run_time_mins
 
 df<-read.csv("movie_metadata.csv")
 library(dplyr)
@@ -14,7 +14,7 @@ q1<-function(df)
 head(q1(df))
 ```
 ```{r}
-#q2 (used movie_metadata dataset)
+#q2 (used movie_metadata dataset)  Is there a realation between the length of a movie title and the ratings ? Generate a report that captures the trend of the number of letters in movies titles over years. We expect a cross tab between the year of the video release and the quantile that length fall under. The results should contain year, min_length, max_length, num_videos_less_than25Percentile, num_videos_25_50Percentile , num_videos_50_75Percentile, num_videos_greaterthan75Precentile
 
 library(tidyr)
 q2<-function(df2)
@@ -31,30 +31,44 @@ q2<-function(df2)
     return(cbind(y,d))
   }
 
-print(q2(df2))
+print(q2(df))
 ```
 
 ```{r}
-#q3
+#q3  In diamonds data set Using the volumne calculated above, create bins that have equal population within them. Generate a report that contains cross tab between bins and cut. Represent the number under each cell as a percentage of total. 
 
 library(descr)
 library(imputeTS)
 t<-read.csv("diamonds.csv")
-q.3<-function(t)
+q.3<-function(df)
 {
-  t$z[t$z=="None"]<-NA
-  t$z<-as.numeric(t$z)
-  x<-na_mean(t)
-  x$volume <- ifelse(x$depth>60,(x$x)*(x$y)*(as.integer(x$z)), 8)
-  x$quant<-as.numeric(ntile(x$volume, 5))
-  y<-crosstab(x$quant,x$cut,plot=FALSE,type="t")
+  df[is.na(df)]<-0
+  df$z[df$z=='None']<-0
+  df$volume <- ifelse(df$depth>60,df$x*df$y*(type.convert(df$z)), 8)
+  df$quant<-as.numeric(ntile(df$volume, 5))
+  y<-crosstab(df$quant,df$cut,plot=FALSE,type="t")
   return(y)
 }
 print(q.3(t))
 ```
 
 ```{r}
-#q5
+#q4  Generate a report that tracks the Avg. imdb rating quarter on quarter, in the last 10 years, for movies that are top performing. You can take the top 10% grossing movies every quarter. Add the number of top performing movies under each genere in the report as well.
+
+q4<-function(df)
+{
+  df<-df %>% drop_na()
+  df5<-df %>% group_by(title_year)%>%summarise(Avg_Rating=mean(imdb_score))
+  
+  return(df5)
+}
+
+head(q4(df))
+```
+
+```{r}
+#q5  Bucket the movies into deciles using the duration. Generate the report that tracks various features like nomiations, wins, count, top 3 geners in each decile. 
+
 library(readr)
 library(mltools)
 u<-read_delim("imdb.csv", delim=',', escape_double=FALSE, escape_backslash=TRUE)
